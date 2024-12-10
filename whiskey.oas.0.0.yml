@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: Distillery and Whisky Inventory API
+  version: 1.0.0
+  description: API for managing an inventory of distilleries and whiskies
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+paths:
+  /distilleries:
+    get:
+      summary: List all distilleries
+      operationId: listDistilleries
+      tags:
+        - Distilleries
+      responses:
+        '200':
+          description: A list of distilleries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Distillery'
+    post:
+      summary: Create a new distillery
+      operationId: createDistillery
+      tags:
+        - Distilleries
+      requestBody:
+        description: Distillery to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DistilleryCreate'
+      responses:
+        '201':
+          description: Successfully created distillery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Distillery'
+        '400':
+          description: Invalid input
+  /distilleries/{distillery_id}:
+    get:
+      summary: Get a distillery by ID
+      operationId: getDistilleryById
+      tags:
+        - Distilleries
+      parameters:
+        - name: distillery_id
+          in: path
+          required: true
+          description: ID of the distillery to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved distillery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Distillery'
+        '404':
+          description: Distillery not found
+  /whiskies:
+    get:
+      summary: List all whiskies
+      operationId: listWhiskies
+      tags:
+        - Whiskies
+      responses:
+        '200':
+          description: A list of whiskies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Whisky'
+    post:
+      summary: Create a new whisky
+      operationId: createWhisky
+      tags:
+        - Whiskies
+      requestBody:
+        description: Whisky to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WhiskyCreate'
+      responses:
+        '201':
+          description: Successfully created whisky
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Whisky'
+        '400':
+          description: Invalid input
+  /whiskies/{whisky_id}:
+    get:
+      summary: Get a whisky by ID
+      operationId: getWhiskyById
+      tags:
+        - Whiskies
+      parameters:
+        - name: whisky_id
+          in: path
+          required: true
+          description: ID of the whisky to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully retrieved whisky
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Whisky'
+        '404':
+          description: Whisky not found
+components:
+  schemas:
+    DistilleryBase:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Glenfiddich"
+        location:
+          type: string
+          example: "Dufftown, Scotland"
+      required:
+        - name
+        - location
+    DistilleryCreate:
+      allOf:
+        - $ref: '#/components/schemas/DistilleryBase'
+    Distillery:
+      allOf:
+        - $ref: '#/components/schemas/DistilleryBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            whiskies:
+              type: array
+              items:
+                $ref: '#/components/schemas/Whisky'
+    WhiskyBase:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Glenfiddich 12 Year Old"
+        age:
+          type: integer
+          example: 12
+        distillery_id:
+          type: integer
+          example: 1
+      required:
+        - name
+        - age
+        - distillery_id
+    WhiskyCreate:
+      allOf:
+        - $ref: '#/components/schemas/WhiskyBase'
+    Whisky:
+      allOf:
+        - $ref: '#/components/schemas/WhiskyBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: 1
